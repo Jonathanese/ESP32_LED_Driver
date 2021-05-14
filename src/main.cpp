@@ -17,15 +17,15 @@ void setup()
 	Debug.setBaud(921600);
 	Debug.setANSI(false);
 	Debug.begin();
-	LEDS.Init();
+	LED_Set.Init();
 
-	LEDS.setBrightness(16);
+	LED_Set.setBrightness(16);
 	for (int strip = 0; strip < GRID_WIDTH; strip++)
 	{
 		for (int led = 0; led < GRID_LENGTH; led++)
 		{
 
-			LEDS.Pixels[strip][led] = Color(45, 45, 45);
+			LED_Set.Pixels[strip][led] = Color(45, 45, 45);
 		}
 	}
 }
@@ -36,21 +36,22 @@ void loop()
 	{
 		task();
 	}
-	LEDS.Show();
+	LED_Set.Show();
 	//delay(20);
 	PM.handler();
 }
 
 void task()
 {
-	
-	static int val = 255;
+	static int index;
+	index %= 1000;
+	int val = 255*sin(3.14*index/1000);
 	for (int strip = 0; strip < GRID_WIDTH; strip++)
 	{
 		for (int led = 0; led < GRID_LENGTH; led++)
 		{
 
-			LEDS.Pixels[strip][led] = Color(val, val, val);
+			LED_Set.Pixels[strip][led] = Color(val, val, val);
 		}
 	}
 	val--;
@@ -58,4 +59,5 @@ void task()
 	{
 		val = 255;
 	}
+	index++;
 }

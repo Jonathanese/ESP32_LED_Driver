@@ -16,8 +16,6 @@ Color::~Color(){}
 
 void Pixel::operator=(Color _color)
 {
-    r = _color.r;
-    g = _color.g;
-    b = _color.b;
+    rgb = _color.rgb;
 }
 

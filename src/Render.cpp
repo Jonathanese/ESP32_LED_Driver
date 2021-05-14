@@ -1,6 +1,6 @@
 #include "Render.h"
 
-LEDSet LEDS;
+LEDSet LED_Set;
 _stripmap _striplayout[GRID_WIDTH] = STRIP_LAYOUT;
 
 LEDSet::LEDSet()
@@ -33,10 +33,19 @@ void LEDSet::Show()
 {
     static uint32_t d_c; //Counter for dithering. Used to alter how things are rounded when we divide.
     static uint32_t sd_c;
-    static uint32_t p_r; //Temporary values for processing channels
-    static uint32_t p_g;
-    static uint32_t p_b;
-    static uint32_t p_w;
+    uint32_t p_r; //Temporary values for processing channels
+    uint32_t p_g;
+    uint32_t p_b;
+    uint32_t p_w;
+
+#if SPATIAL_DITHER_COUNT > 1
+    sd_c++;
+    if (sd_c >= SPATIAL_DITHER_COUNT)
+    {
+        sd_c -= SPATIAL_DITHER_COUNT;
+    }
+
+#endif
     for (uint8_t strip = 0; strip < GRID_WIDTH; strip++)
     {
         for (uint8_t led = 0; led < GRID_LENGTH; led++)
@@ -66,10 +75,10 @@ void LEDSet::Show()
             //Divide first to avoid overrun
 
             //Scale values according to color correction / white balance
-            p_r = p_r * CORRECTION_R / 255;
-            p_g = p_g * CORRECTION_G / 255;
-            p_b = p_b * CORRECTION_B / 255;
-            p_w = p_w * CORRECTION_W / 255;
+            p_r = p_r * CORRECTION_R >> 8;
+            p_g = p_g * CORRECTION_G >> 8;
+            p_b = p_b * CORRECTION_B >> 8;
+            p_w = p_w * CORRECTION_W >> 8;
 
             //Multiply/Divide Constants
             p_r = p_r * _num / _den;
@@ -111,7 +120,6 @@ void LEDSet::Show()
             p_w /= TEMPORAL_DITHER_COUNT;
 #endif
 
-
             /*
             //Sometimes the integer math may produce results like 256. Clamp these to 255 to avoid wraparound.
             if (p_b > 255)
@@ -126,17 +134,25 @@ void LEDSet::Show()
             _driver.setPixel(uint32_t(_stripadr[strip][led]), p_r, p_g, p_b, p_w);
 
 #if SPATIAL_DITHER_COUNT > 1
-            //sd_c += random(SPATIAL_DITHER_COUNT);
             sd_c++;
-            sd_c %= SPATIAL_DITHER_COUNT;
+            if (sd_c >= SPATIAL_DITHER_COUNT)
+            {
+                sd_c -= SPATIAL_DITHER_COUNT;
+            }
+
 #endif
         }
     }
     _driver.showPixels();
     //Cycle Dither Counter
 #if TEMPORAL_DITHER_COUNT > 1
+
     d_c++;
-    d_c %= TEMPORAL_DITHER_COUNT;
+    if (d_c >= TEMPORAL_DITHER_COUNT)
+    {
+        d_c -= TEMPORAL_DITHER_COUNT;
+    }
+
 #endif
 }
 

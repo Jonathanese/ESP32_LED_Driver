@@ -27,8 +27,8 @@
         {0, 59}, {60, 119}, {120, 179}, { 180, 239 } \
     }
 
-#define TEMPORAL_DITHER_COUNT 8
-#define SPATIAL_DITHER_COUNT 2
+#define TEMPORAL_DITHER_COUNT 10
+#define SPATIAL_DITHER_COUNT 7
 
 #endif
 
@@ -45,6 +45,7 @@
         {119,0}, {120,239} \
     }
 
-#define DITHER_COUNT 8
+#define TEMPORAL_DITHER_COUNT 8
+#define SPATIAL_DITHER_COUNT 2
 
 #endif
