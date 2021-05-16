@@ -13,7 +13,7 @@ StopWatch::StopWatch()
 StopWatch::StopWatch(bool started)
 {
 	reset();
-	started ? (void)start() : (void)stop();
+	started ? start() : stop();
 }
 
 StopWatch::~StopWatch()
@@ -58,14 +58,14 @@ bool StopWatch::stop()
 
 bool StopWatch::passed(unsigned long compareTime)
 {
-	return (this->getTime() > compareTime);
+	return (getTime() > compareTime);
 }
 
 bool StopWatch::repeat(unsigned long compareTime)
 {
-	if (this->passed(compareTime))
+	if (passed(compareTime))
 	{
-		this->reset();
+		reset();
 		return true;
 	}
 	return false;

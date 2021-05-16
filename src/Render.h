@@ -15,7 +15,8 @@ struct _stripmap
 
 extern _stripmap _striplayout[GRID_WIDTH];
 
-class LEDSet
+//Encapsulation in a class may not be totally necessary.
+class _led_set
 {
     //Members
 public:
@@ -43,8 +44,8 @@ private:
 
     //Methods
 public:
-    LEDSet();
-    ~LEDSet();
+    _led_set();
+    ~_led_set();
     void Init();
     void Show();
     void setBrightness(uint8_t new_bright);
@@ -55,4 +56,4 @@ private:
     void _allocate_grid();
 };
 
-extern LEDSet LED_Set;
+extern _led_set LEDSet;

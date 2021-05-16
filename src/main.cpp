@@ -1,63 +1,71 @@
 #include <Arduino.h>
 #include "DebugMessage.h"
 #include "PerfMon.h"
-#include "Render.h"
+#include "Animation.h"
 
 PerfMon PM(&Debug, 1000);
 
 Color Pixels[240];
 
-StopWatch tasktimer;
-StopWatch frametimer;
+StopWatch Timer;
+bool TaskSwitch;
 
-void task();
+void task1();
+void task2();
 
 void setup()
 {
 	Debug.setBaud(921600);
 	Debug.setANSI(false);
 	Debug.begin();
-	LED_Set.Init();
-
-	LED_Set.setBrightness(16);
-	for (int strip = 0; strip < GRID_WIDTH; strip++)
-	{
-		for (int led = 0; led < GRID_LENGTH; led++)
-		{
-
-			LED_Set.Pixels[strip][led] = Color(45, 45, 45);
-		}
-	}
+	LEDSet.Init();
+	LEDSet.setBrightness(128);
+	AnimationController.TransitionTo(task1,0);
+	AnimationController.setFrameRate(30);
 }
 
 void loop()
 {
-	if (tasktimer.repeat(10))
+	if(Timer.repeat(2000))
 	{
-		task();
+		if(TaskSwitch)
+		{
+			AnimationController.TransitionTo(task1, 30);
+			TaskSwitch = false;
+		}
+		else{
+			AnimationController.TransitionTo(task2, 30);
+			TaskSwitch = true;
+		}
 	}
-	LED_Set.Show();
-	//delay(20);
+	AnimationController.loop();
 	PM.handler();
 }
 
-void task()
+void task1()
 {
-	static int index;
-	index %= 1000;
-	int val = 255*sin(3.14*index/1000);
+	Color testcolor(255,0,0);
+	testcolor.Lerp(Color(0,255,255), 192);
 	for (int strip = 0; strip < GRID_WIDTH; strip++)
 	{
 		for (int led = 0; led < GRID_LENGTH; led++)
 		{
 
-			LED_Set.Pixels[strip][led] = Color(val, val, val);
+			LEDSet.Pixels[strip][led] = testcolor;
 		}
 	}
-	val--;
-	if(val < 0)
+}
+
+void task2()
+{
+
+	for (int strip = 0; strip < GRID_WIDTH; strip++)
 	{
-		val = 255;
+		for (int led = 0; led < GRID_LENGTH; led++)
+		{
+
+			LEDSet.Pixels[strip][led] = Color(0, 0, 255);
+		}
 	}
-	index++;
+
 }

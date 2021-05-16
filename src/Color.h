@@ -1,5 +1,6 @@
 #pragma once
 #include <Arduino.h>
+#include "Tools.h"
 
 class Color
 {
@@ -17,6 +18,9 @@ public:
         };
         uint32_t rgb;
     };
+
+// Color Tools
+    void Lerp(Color C, uint8_t amount);
 };
 
 class Pixel : public Color

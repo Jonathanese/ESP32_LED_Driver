@@ -1,18 +1,18 @@
 #include "Render.h"
 
-LEDSet LED_Set;
+_led_set LEDSet;
 _stripmap _striplayout[GRID_WIDTH] = STRIP_LAYOUT;
 
-LEDSet::LEDSet()
+_led_set::_led_set()
 {
     _allocate_grid();
 }
 
-LEDSet::~LEDSet()
+_led_set::~_led_set()
 {
 }
 
-void LEDSet::Init()
+void _led_set::Init()
 {
     int _pinlist[] = LED_STRIP_PINS;
     _driver.initled(_outputvalues, _pinlist, LED_STRIPS, LED_PER_STRIP, ORDER_GRBW);
@@ -20,7 +20,7 @@ void LEDSet::Init()
     //_driver.showPixelsFromBuffer(LOOP);
 }
 
-void LEDSet::setBrightness(uint8_t new_bright)
+void _led_set::setBrightness(uint8_t new_bright)
 {
 #ifdef BRIGHTNESS_GAMMA
     _brightness_gamma = GAMMA_LUT[new_bright];
@@ -29,7 +29,7 @@ void LEDSet::setBrightness(uint8_t new_bright)
 #endif
 }
 
-void LEDSet::Show()
+void _led_set::Show()
 {
     static uint32_t d_c; //Counter for dithering. Used to alter how things are rounded when we divide.
     static uint32_t sd_c;
@@ -156,7 +156,7 @@ void LEDSet::Show()
 #endif
 }
 
-void LEDSet::_allocate_grid()
+void _led_set::_allocate_grid()
 {
     for (int strip = 0; strip < LED_STRIPS; strip++)
     {
