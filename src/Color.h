@@ -26,6 +26,6 @@ public:
 class Pixel : public Color
 {
 public:
-    int16_t param;
+    int param;
     void operator=(Color _color);
 };

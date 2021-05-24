@@ -22,11 +22,7 @@ void _led_set::Init()
 
 void _led_set::setBrightness(uint8_t new_bright)
 {
-#ifdef BRIGHTNESS_GAMMA
-    _brightness_gamma = GAMMA_LUT[new_bright];
-#else
     _brightness = new_bright;
-#endif
 }
 
 void _led_set::Show()
@@ -56,17 +52,12 @@ void _led_set::Show()
             p_b = (uint32_t)GAMMA_LUT[Pixels[strip][led].b];
 
 //Mulgiply brightness. Multiplication should happen before division to minimize precision loss.
-#ifdef BRIGHTNESS_GAMMA
-            //32b
-            p_r = p_r * _brightness_gamma;
-            p_g = p_g * _brightness_gamma;
-            p_b = p_b * _brightness_gamma;
-#else
+
             //24b
             p_r = p_r * _brightness;
             p_g = p_g * _brightness;
             p_b = p_b * _brightness;
-#endif
+
             p_w = min(p_r, min(p_g, p_b));
             p_r -= p_w;
             p_g -= p_w;
@@ -120,7 +111,7 @@ void _led_set::Show()
             p_w /= TEMPORAL_DITHER_COUNT;
 #endif
 
-            /*
+            
             //Sometimes the integer math may produce results like 256. Clamp these to 255 to avoid wraparound.
             if (p_b > 255)
                 p_b = 255;
@@ -130,7 +121,7 @@ void _led_set::Show()
                 p_r = 255;
             if (p_w > 255)
                 p_w = 255;
-            */
+            
             _driver.setPixel(uint32_t(_stripadr[strip][led]), p_r, p_g, p_b, p_w);
 
 #if SPATIAL_DITHER_COUNT > 1

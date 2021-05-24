@@ -1,67 +1,90 @@
 #include "Animation.h"
 
-_animation_controller AnimationController;
+Animation *AnimationList[ANIMATION_MAX];
 
-String printcolor(Color c)
+Animation::Animation(String name, uint8_t framerate, void (*new_animator)())
 {
-    return String(c.r) + " " + String(c.g) + " " + String(c.b);
+    _name = name;
+    _framerate = framerate;
+    animator = new_animator;
+    _add_anim_to_list();
 }
 
-_animation_controller::_animation_controller()
+Animation::Animation()
 {
-}
-
-_animation_controller::~_animation_controller()
-{
-}
-
-void _animation_controller::loop()
-{
-    if (_frameTimer.repeat(_frame_time))
-    {
-        _frame_loop();
-    }
-    LEDSet.Show();
-}
-
-void _animation_controller::_frame_loop()
-{
-    _frame_action();
-    //Before we show, check if we are transitioning, and perform the transition.
-    _transition_frame();
-}
-
-void _animation_controller::_transition_frame()
-{
-    if (_transition_frames_remaining > 0)
-    {
-        uint8_t lerp_amt = (uint16_t)_transition_frames_remaining * 255 / _transition_frames_total;
-        uint8_t hits = 0;
+    _name = "";
+    _framerate = 25;
+    animator = [] {
         for (uint8_t strip = 0; strip < GRID_WIDTH; strip++)
         {
             for (uint8_t led = 0; led < GRID_LENGTH; led++)
             {
-                LEDSet.Pixels[strip][led].Lerp(_back_pixels[strip][led], lerp_amt);
-                hits++;
+                LEDSet.Pixels[strip][led].Lerp(Color(0,0,0), 32);
+                if(led == LEDSet.Pixels[0][0].param)
+                {
+                    LEDSet.Pixels[strip][led] = Color(255,0,0);
+                }
             }
         }
+        LEDSet.Pixels[0][0].param++;
+        LEDSet.Pixels[0][0].param %= GRID_LENGTH;
+    };
+    _add_anim_to_list();
+}
 
-        _transition_frames_remaining--;
+String Animation::getName()
+{
+    return _name;
+}
+
+uint8_t Animation::getFrameRate()
+{
+    return _framerate;
+}
+
+void Animation::_add_anim_to_list()
+{
+
+    bool animexists = false;
+    uint8_t anim_index = 0;
+    for (; anim_index < ANIMATION_MAX; anim_index++)
+    {
+        if (AnimationList[anim_index] == NULL)
+        {
+            break;
+        }
+        if (this->getName() == AnimationList[anim_index]->getName())
+        {
+            //Animation already exists
+            animexists = true;
+            break;
+        }
+    }
+
+    if (!animexists)
+    {
+        AnimationList[anim_index] = this;
     }
 }
 
-void _animation_controller::TransitionTo(void (*anim_function)(), uint8_t frames)
+Animation Animation::getAnimation(uint8_t idx)
 {
-    //Copy current frame to _back_pixels so we have colors to transition from.
-    memcpy(_back_pixels, LEDSet.Pixels, sizeof(Pixel) * GRID_WIDTH * GRID_LENGTH);
-    _transition_frames_remaining = frames;
-    _transition_frames_total = frames;
-
-    //Switch over to the new animation
-    _frame_action = anim_function;
+    return *AnimationList[idx];
 }
 
-void _animation_controller::setFrameRate(uint8_t fps)
+Animation Animation::getAnimation(String name)
 {
-    _frame_time = 1000 / fps;
+    for (uint8_t i = 0; i < ANIMATION_MAX; i++)
+    {
+        if (AnimationList[i] != NULL)
+        {
+            if (AnimationList[i]->getName() == name)
+            {
+                return *AnimationList[i];
+            }
+        }
+    }
+
+    Debug.Message(DM_ERROR, "Animation Not Found: " + name);
+    return getAnimation("none");
 }

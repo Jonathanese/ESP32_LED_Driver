@@ -1,34 +1,56 @@
 #pragma once
+#include <Arduino.h>
 #include "Render.h"
-#include "StopWatch.h"
 
-//Encapsulation in a class may not be totally necessary
-class _animation_controller
-{   //Members
-    public:
+#define ANIMATION_MAX 20
 
-    private:
-    uint8_t _transition_frames_total;
-    uint8_t _transition_frames_remaining;
-    //Use Pixels here so we can use memcpy
-    Pixel _back_pixels[GRID_WIDTH][GRID_LENGTH];
-    StopWatch _frameTimer;
-    uint8_t _frame_time;
+class Animation
+{
+public:
+    Animation(String name, uint8_t framerate, void (*new_animator)());
+    Animation();
+    String getName();
+    uint8_t getFrameRate();
+    static Animation getAnimation(uint8_t idx);
+    static Animation getAnimation(String name);
+    void (*animator)() = _nop;
 
-
-    //Methods
-    public:
-    _animation_controller();
-    ~_animation_controller();
-    void loop();
-    void setFrameRate(uint8_t fps);
-    void TransitionTo(void(*anim_function)(), uint8_t frames);
-
-    private:
-    void (*_frame_action)(void);
-    void _transition_frame();
-    void _frame_loop();
-
+private:
+    String _name;
+    uint8_t _framerate;
+    void _add_anim_to_list();
+    static void _nop(){};
 };
 
-extern _animation_controller AnimationController;
+extern Animation *AnimationList[];
+
+#define MIDPOINT 96
+namespace AnimTools
+{
+    static Color fireColor(uint8_t heat, Color Spark, Color Flame)
+    {
+        if (heat <= MIDPOINT)
+        {
+            Flame.Lerp(Color(0, 0, 0), (((MIDPOINT - heat) * 255 / MIDPOINT)));
+            return Flame;
+        }
+        else if (heat < 255)
+        {
+            Flame.Lerp(Spark, (((heat - MIDPOINT) * 255 / (255 - MIDPOINT))));
+            return Flame;
+        }
+        else
+        {
+            return Spark;
+        }
+    }
+
+    static uint8_t stripWraparound(int idx)
+    {
+        while (idx >= GRID_WIDTH)
+            idx -= GRID_WIDTH;
+        while (idx < 0)
+            idx += GRID_WIDTH;
+    }
+
+};
