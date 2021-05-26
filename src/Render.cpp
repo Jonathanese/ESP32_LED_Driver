@@ -17,12 +17,16 @@ void _led_set::Init()
     int _pinlist[] = LED_STRIP_PINS;
     _driver.initled(_outputvalues, _pinlist, LED_STRIPS, LED_PER_STRIP, ORDER_GRBW);
     _driver.setBrightness(255);
-    //_driver.showPixelsFromBuffer(LOOP);
 }
 
 void _led_set::setBrightness(uint8_t new_bright)
 {
     _brightness = new_bright;
+}
+
+uint8_t _led_set::getBrightness()
+{
+    return _brightness;
 }
 
 void _led_set::Show()

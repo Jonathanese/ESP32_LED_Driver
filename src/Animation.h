@@ -53,4 +53,68 @@ namespace AnimTools
             idx += GRID_WIDTH;
     }
 
+    // Random functions from FastLED
+    static uint16_t random16()
+    {
+        static uint16_t seed = 1432;
+        seed = (seed << 11) + (seed << 2) + seed + (uint16_t)13849;
+        return seed;
+    }
+
+    static uint16_t random16(uint16_t lim)
+    {
+        uint16_t r = random16();
+        uint32_t p = (uint32_t)lim * (uint32_t)r;
+        r = p >> 16;
+        return r;
+    }
+
+    static uint16_t random16(uint16_t min, uint16_t lim)
+    {
+        uint16_t delta = lim - min;
+        uint16_t r = random16(delta) + min;
+        return r;
+    }
+
+    static uint8_t random8()
+    {
+        uint16_t r = random16();
+        return (uint8_t)(((uint8_t)(r & 0xFF)) +
+                         ((uint8_t)(r >> 8)));
+    }
+
+    static uint8_t random8(uint8_t lim)
+    {
+        uint8_t r = random8();
+        r = (r * lim) >> 8;
+        return r;
+    }
+
+    static uint8_t random8(uint8_t min, uint8_t lim)
+    {
+        uint8_t delta = lim - min;
+        uint8_t r = random8(delta) + min;
+        return r;
+    }
+
+    static bool roll(uint8_t value)
+    {
+        return (random8() <= value);
+    }
+
+    static bool roll16(uint16_t value)
+    {
+        return (random16() <= value);
+    }
+
+    static uint8_t para(uint8_t x)
+    {
+        uint16_t X = x;
+        uint16_t output;
+
+        output = 4*X;
+        output -= X*X >>6;
+        if(output > 255) output = 255;
+        return output;
+    }
 };

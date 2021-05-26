@@ -45,6 +45,7 @@ public:
     void Init();
     void Show();
     void setBrightness(uint8_t new_bright);
+    uint8_t getBrightness();
     uint8_t Count();
     uint8_t GlobalCount();
 

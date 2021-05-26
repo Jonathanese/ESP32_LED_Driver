@@ -30,13 +30,11 @@ void _animation_controller::_transition_frame()
     if (_transition_frames_remaining > 0)
     {
         uint8_t lerp_amt = (uint16_t)_transition_frames_remaining * 255 / _transition_frames_total;
-        uint8_t hits = 0;
         for (uint8_t strip = 0; strip < GRID_WIDTH; strip++)
         {
             for (uint8_t led = 0; led < GRID_LENGTH; led++)
             {
                 LEDSet.Pixels[strip][led].Lerp(_back_pixels[strip][led], lerp_amt);
-                hits++;
             }
         }
         LEDSet.setBrightness(tools::lerp8(_brightness, _old_brightness, lerp_amt));
@@ -76,7 +74,7 @@ void _animation_controller::ParseJson(char *topic, uint8_t *payload, unsigned in
 {
     deserializeJson(_json_doc, payload);
     bool isChange = false;
-    uint16_t transition_time = 1000;
+    uint16_t transition_time = 250;
     Color FG = Foreground;
     uint8_t brightness = _brightness;
     String animation = _current_animation.getName();
@@ -125,6 +123,14 @@ void _animation_controller::ParseJson(char *topic, uint8_t *payload, unsigned in
     {
         transition_time = _json_doc["transition"];
         
+    }
+
+    if (_json_doc.containsKey("state"))
+    {
+        if(String((const char*)_json_doc["state"]) == "OFF")
+        {
+            animation = "OFF";
+        }
     }
 
     if (isChange)
