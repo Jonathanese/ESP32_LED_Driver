@@ -9,9 +9,6 @@
         for (uint8_t led = 0; led < GRID_LENGTH; led++)
 #define THIS_PIXEL LEDSet.Pixels[strip][led]
 
-
-
-
 using namespace AnimTools;
 
 Animation Off("OFF", 20, [] {
@@ -114,8 +111,8 @@ Animation Coals("coals", 60, [] {
 Animation Fireflies("fireflies", 120, [] {
     FOR_PIXELS
     {
-        THIS_PIXEL.rgb = FG.rgb;
-        THIS_PIXEL.Lerp(Color(0,0,0), 192);
+        THIS_PIXEL = FG;
+        THIS_PIXEL.Lerp(Color(0, 0, 0), 192);
 
         if (roll16(FIREFLIES_CHANCE))
         {
@@ -125,7 +122,39 @@ Animation Fireflies("fireflies", 120, [] {
         if (THIS_PIXEL.param > 0)
         {
             THIS_PIXEL.Lerp(Color(255, 255, 0), para(THIS_PIXEL.param));
-            THIS_PIXEL.param-= 2;
+            THIS_PIXEL.param -= 2;
         }
     }}
+});
+
+#define GLOW_IDX LEDSet.Pixels[0][0].param
+#define GLOW_DIR LEDSet.Pixels[0][1].param
+
+Animation MovingGlow("moving_glow", 45, [] {
+    Color FG2 = FG;
+    FG2.Lerp(Color(0,0,0), 128);
+    FOR_PIXELS
+    {
+        THIS_PIXEL = FG;
+        
+        THIS_PIXEL.Lerp(FG2, clamp(16 * dist(led, GLOW_IDX)));
+    }}
+
+    GLOW_IDX = (uint16_t)sin8(GLOW_DIR)*GRID_LENGTH >>8;
+    GLOW_DIR++;
+    GLOW_DIR %= 255;
+
+});
+
+#define FILMIC_IDX LEDSet.Pixels[0][0].param
+Animation Filmic("filmic", 90, []{
+    FOR_PIXELS{
+    if(FILMIC_IDX)
+        THIS_PIXEL = FG;
+    else
+        THIS_PIXEL = Color(0,0,0);
+    }}
+
+    FILMIC_IDX = !(FILMIC_IDX);
+
 });
