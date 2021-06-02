@@ -1,5 +1,6 @@
 #include "MQTT.h"
 #include "secrets.h"
+#include <ArduinoOTA.h>
 
 #define FRAME_TIME_MAINTAIN 100
 #define FRAME_TIME_CONNECTING 10
@@ -53,6 +54,10 @@ void _mqttinit()
     _retry_timer.reset(RETRY_TIME);
 
     _mqtt_client.setServer(SECRET_MQTT_SERVER, 1883);
+
+
+    ArduinoOTA.setHostname(SECRET_MQTT_NAME);
+    ArduinoOTA.begin();
 }
 
 void _mqttsubscribeinit()
@@ -99,6 +104,7 @@ void _wificonnect()
 void _maintain()
 {
     _mqtt_client.loop();
+    ArduinoOTA.handle();
     if (!_mqtt_client.connected())
     {
         if (!WiFi.isConnected())

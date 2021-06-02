@@ -1,5 +1,5 @@
 #pragma once
-#define POLE1
+#define CEILING_STRIP
 
 
 //Generally constant across all devices
@@ -36,4 +36,24 @@
 
 #endif
 
+//Living room vertical pole
+#ifdef CEILING_STRIP
 
+#define SECRET_MQTT_STATE_TOPIC "ledstrip/strip2"
+#define SECRET_MQTT_COMMAND_TOPIC "ledstrip/strip2/set"
+#define SECRET_MQTT_NAME "strip2"
+
+#define LED_PER_STRIP 60
+#define LED_STRIPS 4
+
+#define GRID_WIDTH 2
+#define GRID_LENGTH 120
+#define STRIP_LAYOUT                                 \
+    {                                                \
+        {119,0},{120,239} \
+    }
+
+#define TEMPORAL_DITHER_COUNT 10
+#define SPATIAL_DITHER_COUNT 7
+
+#endif

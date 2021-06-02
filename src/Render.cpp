@@ -170,7 +170,7 @@ void _led_set::_allocate_grid()
             int stripsize = _striplayout[strip].start - _striplayout[strip].stop + 1;
             for (int pixel = 0; pixel < stripsize; pixel++)
             {
-                _stripadr[strip][pixel] = _striplayout[strip].stop - pixel;
+                _stripadr[strip][pixel] = _striplayout[strip].start - pixel;
             }
         }
     }
