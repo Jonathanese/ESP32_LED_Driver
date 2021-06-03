@@ -27,8 +27,7 @@ extern Animation *AnimationList[];
 #define MIDPOINT 96
 namespace AnimTools
 {
-    const uint8_t b_m16_interleave[] = { 0, 49, 49, 41, 90, 27, 117, 10 };
-
+    const uint8_t b_m16_interleave[] = {0, 49, 49, 41, 90, 27, 117, 10};
 
     static Color fireColor(uint8_t heat, Color Spark, Color Flame)
     {
@@ -56,12 +55,24 @@ namespace AnimTools
             idx += GRID_WIDTH;
     }
 
+    static uint8_t clamp(int x)
+    {
+        if (x > 255)
+            return 255;
+        if (x < 0)
+            return 0;
+        return x;
+    }
+
     // Random functions from FastLED
     static uint16_t random16()
     {
-        static uint16_t seed = 1432;
+        return random(65535);
+        /*
+        static uint16_t seed = 1431;
         seed = (seed << 11) + (seed << 2) + seed + (uint16_t)13849;
         return seed;
+        */
     }
 
     static uint16_t random16(uint16_t lim)
@@ -115,11 +126,10 @@ namespace AnimTools
         uint16_t X = x;
         uint16_t output;
 
-        output = 4 * X;
-        output -= X * X >> 6;
-        if (output > 255)
-            output = 255;
-        return output;
+        output = X << 2;      //4x
+        output -= X * X >> 6; //x^2/64
+
+        return clamp(output);
     }
 
     static uint8_t dist(uint8_t x, uint8_t y)
@@ -129,15 +139,6 @@ namespace AnimTools
             return x - y;
         }
         return y - x;
-    }
-
-    static uint8_t clamp(int x)
-    {
-        if (x > 255)
-            return 255;
-        if (x < 0)
-            return 0;
-        return x;
     }
 
     static uint8_t sin8(uint8_t theta)

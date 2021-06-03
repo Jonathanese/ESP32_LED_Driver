@@ -34,6 +34,13 @@
 #define TEMPORAL_DITHER_COUNT 10
 #define SPATIAL_DITHER_COUNT 7
 
+#define FIRE_COOLING 5
+#define FIRE_SPARKING 40
+
+#define COALS_AMOUNT 1024
+
+#define FIREFLIES_CHANCE 1
+
 #endif
 
 //Living room vertical pole
@@ -47,13 +54,20 @@
 #define LED_STRIPS 4
 
 #define GRID_WIDTH 2
-#define GRID_LENGTH 120
+#define GRID_LENGTH 113
 #define STRIP_LAYOUT                                 \
     {                                                \
-        {119,0},{120,239} \
+        {112,0},{113,225} \
     }
 
 #define TEMPORAL_DITHER_COUNT 10
 #define SPATIAL_DITHER_COUNT 7
+
+#define FIRE_COOLING 3
+#define FIRE_SPARKING 50
+
+#define COALS_AMOUNT 768
+
+#define FIREFLIES_CHANCE 1
 
 #endif
