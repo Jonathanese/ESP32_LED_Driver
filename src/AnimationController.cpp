@@ -6,7 +6,7 @@ void _animation_controller::init()
 {
     LEDSet.Init();
     _mqtt_client.setCallback(MQTT_Update_callback);
-    TransitionTo(_current_animation, 500, 128);
+    TransitionTo(_current_animation, DEFAULT_TRANSITION_TIME, 255);
 }
 void _animation_controller::loop()
 {
@@ -74,7 +74,7 @@ void _animation_controller::ParseJson(char *topic, uint8_t *payload, unsigned in
 {
     deserializeJson(_json_doc, payload);
     bool isChange = false;
-    uint16_t transition_time = 250;
+    uint16_t transition_time = DEFAULT_TRANSITION_TIME;
     Color FG = Foreground;
     uint8_t brightness = _brightness;
     String animation = _current_animation.getName();
@@ -122,14 +122,22 @@ void _animation_controller::ParseJson(char *topic, uint8_t *payload, unsigned in
     if (_json_doc.containsKey("transition"))
     {
         transition_time = _json_doc["transition"];
+        transition_time *= 1000;
         
     }
 
     if (_json_doc.containsKey("state"))
     {
-        if(String((const char*)_json_doc["state"]) == "OFF")
+        String st = _json_doc["state"];
+        if(st == "OFF")
         {
             animation = "OFF";
+            isChange = true;
+        }
+        if(st == "ON" && !_json_doc.containsKey("effect"))
+        {
+            animation = "none";
+            isChange = true;
         }
     }
 

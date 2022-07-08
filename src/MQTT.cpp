@@ -41,7 +41,7 @@ void _wifiinit()
     Debug.Message(DM_INFO, "Connecting to WIFI");
     _currentState = WIFI_CONNECTING;
     _frame_time = FRAME_TIME_CONNECTING;
-
+    WiFi.setHostname(WIFI_NAME);
     WiFi.mode(WIFI_STA);
     WiFi.begin(SECRET_WIFI_NAME, SECRET_WIFI_PASSWORD);
 }

@@ -9,7 +9,7 @@
         12, 14, 26, 25 \
     }
 
-
+#define DEFAULT_TRANSITION_TIME 500
 
 
 //Config for specific layouts
@@ -20,6 +20,7 @@
 #define SECRET_MQTT_STATE_TOPIC "ledstrip/pole1"
 #define SECRET_MQTT_COMMAND_TOPIC "ledstrip/pole1/set"
 #define SECRET_MQTT_NAME "pole1"
+#define WIFI_NAME "Pole"
 
 #define LED_PER_STRIP 60
 #define LED_STRIPS 4
@@ -49,6 +50,7 @@
 #define SECRET_MQTT_STATE_TOPIC "ledstrip/strip2"
 #define SECRET_MQTT_COMMAND_TOPIC "ledstrip/strip2/set"
 #define SECRET_MQTT_NAME "strip2"
+#define WIFI_NAME "Ceiling LED Strip"
 
 #define LED_PER_STRIP 60
 #define LED_STRIPS 4

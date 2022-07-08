@@ -3,6 +3,7 @@
 #include "StopWatch.h"
 #include "Animation.h"
 #include <ArduinoJson.h>
+#include "CONFIG.h"
 #include "MQTT.h"
 
 static void MQTT_Update_callback(char *topic, uint8_t *payload, unsigned int length);
