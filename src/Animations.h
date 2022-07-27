@@ -11,6 +11,8 @@
 
 using namespace AnimTools;
 
+Animation NotFound("NF", 20, []{});
+
 Animation Off("OFF", 20, [] {
     FOR_PIXELS
     {

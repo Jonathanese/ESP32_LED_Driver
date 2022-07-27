@@ -15,8 +15,8 @@ public:
     Color Foreground;
 
 private:
-    uint8_t _transition_frames_total;
-    uint8_t _transition_frames_remaining;
+    uint16_t _transition_frames_total;
+    uint16_t _transition_frames_remaining;
     uint8_t _old_brightness;
     uint8_t _brightness;
     //Use Pixels here so we can use memcpy
@@ -29,8 +29,8 @@ public:
     void init();
     void loop();
     void setFrameRate(uint8_t fps);
-    void TransitionTo(Animation new_animation, uint16_t transition_time, uint8_t brightness);
-    void TransitionTo(String animation_name, uint16_t transition_time, uint8_t brightness, Color foreground);
+    void TransitionTo(Animation new_animation, uint32_t transition_time, uint8_t brightness);
+    void TransitionTo(String animation_name, uint32_t transition_time, uint8_t brightness, Color foreground);
     void ParseJson(char *topic, byte *payload, unsigned int length);
     
 private:

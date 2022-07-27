@@ -1,5 +1,5 @@
 #pragma once
-#define CEILING_STRIP
+#define POLE1
 
 
 //Generally constant across all devices

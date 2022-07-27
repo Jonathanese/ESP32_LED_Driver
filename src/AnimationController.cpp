@@ -29,7 +29,7 @@ void _animation_controller::_transition_frame()
 {
     if (_transition_frames_remaining > 0)
     {
-        uint8_t lerp_amt = (uint16_t)_transition_frames_remaining * 255 / _transition_frames_total;
+        uint8_t lerp_amt = (uint32_t)_transition_frames_remaining * 255 / _transition_frames_total;
         for (uint8_t strip = 0; strip < GRID_WIDTH; strip++)
         {
             for (uint8_t led = 0; led < GRID_LENGTH; led++)
@@ -43,15 +43,15 @@ void _animation_controller::_transition_frame()
     }
 }
 
-void _animation_controller::TransitionTo(Animation new_animation, uint16_t transition_time, uint8_t brightness)
+void _animation_controller::TransitionTo(Animation new_animation, uint32_t transition_time, uint8_t brightness)
 {
     //Copy current frame to _back_pixels so we have colors to transition from.
     memcpy(_back_pixels, LEDSet.Pixels, sizeof(Pixel) * GRID_WIDTH * GRID_LENGTH);
     setFrameRate(new_animation.getFrameRate());
-    uint8_t transition_frames = transition_time / _frame_time;
+    uint16_t transition_frames = transition_time / _frame_time;
     _transition_frames_remaining = transition_frames;
     _transition_frames_total = transition_frames;
-    _old_brightness = _brightness;
+    _old_brightness = LEDSet.getBrightness();
     _brightness = brightness;
     
 
@@ -59,9 +59,15 @@ void _animation_controller::TransitionTo(Animation new_animation, uint16_t trans
     _current_animation = new_animation;
 }
 
-void _animation_controller::TransitionTo(String animation_name, uint16_t transition_time, uint8_t brightness, Color foreground)
+void _animation_controller::TransitionTo(String animation_name, uint32_t transition_time, uint8_t brightness, Color foreground)
 {
-    TransitionTo(Animation::getAnimation(animation_name), transition_time, brightness);
+    if(Animation::getAnimation(animation_name).getName() == "NF")
+    {
+        TransitionTo(_current_animation, transition_time, brightness);
+    }
+    else{
+        TransitionTo(Animation::getAnimation(animation_name), transition_time, brightness);
+    }
     Foreground = foreground;
 }
 
@@ -74,7 +80,7 @@ void _animation_controller::ParseJson(char *topic, uint8_t *payload, unsigned in
 {
     deserializeJson(_json_doc, payload);
     bool isChange = false;
-    uint16_t transition_time = DEFAULT_TRANSITION_TIME;
+    uint32_t transition_time = DEFAULT_TRANSITION_TIME;
     Color FG = Foreground;
     uint8_t brightness = _brightness;
     String animation = _current_animation.getName();
@@ -110,13 +116,16 @@ void _animation_controller::ParseJson(char *topic, uint8_t *payload, unsigned in
 
     if (_json_doc.containsKey("effect"))
     {
-        
-        animation = (const char *)_json_doc["effect"];
-        if (animation != _current_animation.getName())
+        String newAnimation = (const char *)_json_doc["effect"];
+        if (newAnimation != "")
         {
-            isChange = true;
+            if (newAnimation != animation)
+            {
+                animation = newAnimation;
+                isChange = true;
+            }
+            Debug.Message(DM_INFO, "Received Animation: " + animation);
         }
-        Debug.Message(DM_INFO, "Received Animation: " + animation);
     }
 
     if (_json_doc.containsKey("transition"))

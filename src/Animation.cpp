@@ -86,5 +86,5 @@ Animation Animation::getAnimation(String name)
     }
 
     Debug.Message(DM_ERROR, "Animation Not Found: " + name);
-    return getAnimation("none");
+    return getAnimation("NF");
 }
